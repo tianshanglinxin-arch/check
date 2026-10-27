@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d16">
+<title>CODE SHIELD V8CC — Test Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#080d16;--panel:#101a29;--panel2:#0b1320;--line:#23344a;--text:#edf4ff;--muted:#9aabc2;--green:#52f2a5;--cyan:#56cfff;--yellow:#ffd166;--red:#ff6b7d}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#14253a 0%,var(--bg) 48%);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:24px 16px 18px;border-bottom:1px solid var(--line);background:#080d16cc}
+.wrap{max-width:1100px;margin:auto}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border:1px solid var(--green);border-radius:12px;display:grid;place-items:center;color:var(--green);font-weight:900;box-shadow:0 0 22px #52f2a51c}
+h1{font-size:19px;margin:0;letter-spacing:.06em} .sub{color:var(--muted);font-size:12px;margin-top:3px}
+.pill{display:inline-block;border:1px solid #285c4b;color:var(--green);border-radius:99px;padding:3px 9px;font-size:11px;margin-top:12px}
+main{max-width:1100px;margin:auto;padding:16px;display:grid;gap:14px}
+.panel{background:linear-gradient(145deg,#111d2d,#0d1522);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+h2{font-size:16px;margin:0 0 10px}h3{font-size:13px;margin:0 0 8px;color:#c8d8eb}
+.note{color:var(--muted);font-size:12px;margin:6px 0 12px}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}
+textarea,input{width:100%;background:#070d16;color:#eaf3ff;border:1px solid #2b3d54;border-radius:10px;padding:12px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;outline:none}
+textarea{min-height:190px;resize:vertical;tab-size:2}textarea:focus,input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px #56cfff18}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:760px){.grid.two{grid-template-columns:1fr 1fr}.grid.metrics{grid-template-columns:repeat(4,1fr)}}
+button{border:1px solid #36506d;background:#15243a;color:var(--text);border-radius:10px;padding:11px 14px;font-weight:750;cursor:pointer;font-size:14px}
+button.primary{background:var(--green);color:#06140d;border-color:var(--green)}button.warn{border-color:#7a5a28;color:var(--yellow)}button.danger{border-color:#743746;color:#ff9aa7}
+button:active{transform:translateY(1px)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.metric{background:#0a1320;border:1px solid var(--line);border-radius:12px;padding:13px}
+.metric .v{font-size:25px;font-weight:850;color:var(--green)}.metric .k{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.status{border-radius:8px;padding:8px 10px;font-size:12px;background:#101d2d;color:var(--muted);margin-top:10px;white-space:pre-wrap;overflow-wrap:anywhere}
+.status.ok{color:var(--green);border:1px solid #285c4b}.status.warn{color:var(--yellow);border:1px solid #66532c}.status.bad{color:#ff9aa7;border:1px solid #6a3440}
+.checks{display:grid;gap:8px}.check{display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:10px;background:#0a1320;font-size:13px}.dot{font-size:16px;line-height:1.3;min-width:18px}
+small,.muted{color:var(--muted)}.scorebar{height:8px;border-radius:99px;background:#253449;overflow:hidden;margin-top:8px}.scorebar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .25s}
+footer{color:var(--muted);font-size:11px;text-align:center;padding:6px 16px 30px}
+#runOut{min-height:100px;max-height:260px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+details{border:1px solid var(--line);border-radius:10px;padding:10px}summary{cursor:pointer;font-weight:700;font-size:13px}
+code{color:#9feac7}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="brand"><div class="logo">CS</div><div><h1>CODE SHIELD <span style="color:var(--green)">V8CC</span></h1><div class="sub">OBFUSCATION TEST LAB / LOCAL ANALYSIS</div></div></div>
+  <div class="pill">● CLIENT-SIDE CHECKS · NO AUTO-EXECUTION</div>
+</div></header>
+<main>
+  <section class="panel">
+    <h2>01 / コードを入力</h2>
+    <p class="note">元コードと難読化後コードを貼り付けてください。入力内容はこのページ内で解析します。ページを閉じると入力内容は失われます。</p>
+    <div class="grid two">
+      <div><label for="original">元コード</label><textarea id="original" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="function greet(name) {&#10;  return &quot;Hello, &quot; + name + &quot;!&quot;;&#10;}&#10;console.log(greet(&quot;V8CC&quot;));"></textarea></div>
+      <div><label for="obfuscated">難読化後コード</label><textarea id="obfuscated" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="V8CCで生成した難読化コードを貼り付け"></textarea></div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="analyze">静的解析を実行</button>
+      <button id="sample">サンプルを入力</button>
+      <button id="clear" class="danger">入力を消去</button>
+    </div>
+    <div class="status" id="mainStatus" role="status">待機中 — 静的解析はコードを実行しません。</div>
+  </section>
+
+  <section class="panel">
+    <h2>02 / 概要スコア</h2>
+    <p class="note">スコアは目安です。解析コストや安全性を保証する数値ではありません。</p>
+    <div class="grid metrics">
+      <div class="metric"><div class="v" id="score">—</div><div class="k">難読化ヒューリスティック / 100</div><div class="scorebar"><span id="bar"></span></div></div>
+      <div class="metric"><div class="v" id="sizeRatio">—</div><div class="k">サイズ比（難読化後 ÷ 元）</div></div>
+      <div class="metric"><div class="v" id="stringCount">—</div><div class="k">検出文字列リテラル数</div></div>
+      <div class="metric"><div class="v" id="riskCount">—</div><div class="k">注意パターン数（難読化後）</div></div>
+    </div>
+    <div class="status" id="scoreExplain">解析を実行すると結果が表示されます。</div>
+  </section>
+
+  <section class="panel">
+    <h2>03 / 検査結果</h2>
+    <div class="checks" id="checks"><div class="check"><span class="dot">○</span><div>まだ検査していません。</div></div></div>
+  </section>
+
+  <section class="panel">
+    <div class="row"><h2>04 / 動作テスト（任意・手動）</h2><span class="pill" style="margin:0">隔離 iframe</span></div>
+    <p class="note">静的解析ではコードは動きません。下のテストは、あなたがボタンを押したときだけ実行します。ネットワーク接続・フォーム送信などをCSPで制限した隔離環境ですが、未知のコードを実行するリスクはゼロではありません。信頼できないコードは実行しないでください。</p>
+    <label for="expected">期待する出力（任意・1行）</label>
+    <input id="expected" value="Hello, V8CC!" autocomplete="off">
+    <div class="actions">
+      <button id="runOriginal" class="warn">元コードを隔離実行</button>
+      <button id="runObfuscated" class="warn">難読化後を隔離実行</button>
+      <button id="stopRun">テスト結果を消去</button>
+    </div>
+    <div id="runOut" class="status" role="status">未実行。コードは自動実行されません。</div>
+    <p class="note">制限事項：ブラウザーのCSPにより <code>eval</code> / <code>Function</code> コンストラクターなどを使うコードは失敗する場合があります。実行結果が出ても完全な安全性は証明されません。</p>
+  </section>
+
+  <section class="panel">
+    <h2>05 / 判定の読み方</h2>
+    <details><summary>「実測」と「推定」の違い</summary><p class="note">文字数、バイト数、正規表現で検出したパターン、隔離実行時の出力やエラーは、このページで実際に観測した結果です。一方、難読化スコアや「解析されにくさ」は単純なヒューリスティックによる推定です。専用のJavaScriptパーサーや専門家によるリバースエンジニアリング試験の代替にはなりません。</p></details>
+    <details style="margin-top:8px"><summary>このツールで分からないこと</summary><p class="note">本物の攻撃者が解析に要する時間、未知の脆弱性、サーバー側の保護、秘密情報の漏えい可能性を断定できません。パスワード・APIキー・トークンなどの秘密情報はクライアントコードに埋め込まないでください。</p></details>
+  </section>
+</main>
+<footer>CODE SHIELD V8CC TEST LAB · iPhone Safari対応 · 外部ライブラリなし</footer>
+
+<script>
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
+const original = $("original"), obfuscated = $("obfuscated");
+const sample = 'function greet(name) {\n  return "Hello, " + name + "!";\n}\n\nconsole.log(greet("V8CC"));';
+const utf8Bytes = s => new TextEncoder().encode(s).length;
+function addCheck(list, kind, title, detail){
+  const icon = kind==="ok" ? "✓" : kind==="warn" ? "!" : kind==="bad" ? "×" : "i";
+  list.push({kind,title,detail,icon});
+}
+function countMatches(s, re){const m=s.match(re);return m?m.length:0;}
+function analyzeOne(s){
+  const strings = countMatches(s, /(["'`])(?:\\.|(?!\1)[^\\])*?\1/g);
+  const hexEscapes = countMatches(s, /\\x[0-9a-fA-F]{2}|\\u(?:[0-9a-fA-F]{4}|\{[0-9a-fA-F]+\})/g);
+  const shortNames = countMatches(s, /\b(?:_[0-9a-fA-F]{3,}|[a-zA-Z_$][\w$]{0,1})\b/g);
+  const longLines = s.split(/\r?\n/).filter(line=>line.length>500).length;
+  const patterns = [
+    ["eval / Function", /\beval\s*\(|\bnew\s+Function\s*\(|\bFunction\s*\(/g],
+    ["ネットワークAPI", /\bfetch\s*\(|\bXMLHttpRequest\b|\bWebSocket\b|\bsendBeacon\s*\(/g],
+    ["ストレージ・Cookie", /\blocalStorage\b|\bsessionStorage\b|\bdocument\s*\.\s*cookie\b/g],
+    ["動的コード・難読化関連", /\batob\s*\(|\bfromCharCode\s*\(|\bsetInterval\s*\(|\bdebugger\b/g]
+  ];
+  const found = patterns.map(([label,re])=>({label,count:countMatches(s,re)})).filter(x=>x.count);
+  return {strings,hexEscapes,shortNames,longLines,found};
+}
+function scoreObfuscation(s, stats){
+  if(!s.trim()) return 0;
+  let score=0;
+  if(stats.hexEscapes) score+=Math.min(20,stats.hexEscapes*2);
+  if(/\b_0x[0-9a-f]{3,}\b/i.test(s)) score+=18;
+  if(/\b(?:_0x[a-f0-9]+\s*\(|\bwhile\s*\(\s*!!\[\s*\]\s*\))/i.test(s)) score+=12;
+  if(/\[[\s\S]{0,200}?\]\s*\[\s*["'][^"']+["']\s*\]/.test(s)) score+=8;
+  if(stats.longLines) score+=Math.min(10,stats.longLines*2);
+  if(stats.strings>0 && stats.strings<8 && s.length>1000) score+=6;
+  if(s.length>5000 && stats.hexEscapes>20) score+=8;
+  const readableWords=countMatches(s, /\b(function|return|const|let|var|console|window|document)\b/g);
+  if(readableWords>12) score-=Math.min(12,readableWords/3);
+  return Math.max(0,Math.min(100,Math.round(score)));
+}
+function delimiterCheck(s){
+  const stack=[]; let quote=null, escape=false, lineComment=false, blockComment=false;
+  const pairs={")":"(","]":"[","}":"{"};
+  for(let i=0;i<s.length;i++){
+    const c=s[i], n=s[i+1];
+    if(lineComment){if(c==="\n")lineComment=false;continue;}
+    if(blockComment){if(c==="*"&&n==="/"){blockComment=false;i++;}continue;}
+    if(quote){if(escape){escape=false;continue;}if(c==="\\"){escape=true;continue;}if(c===quote)quote=null;continue;}
+    if(c==="/"&&n==="/"){lineComment=true;i++;continue;}
+    if(c==="/"&&n==="*"){blockComment=true;i++;continue;}
+    if(c==="'"||c==='"'||c==="`"){quote=c;continue;}
+    if(c==="("||c==="["||c==="{")stack.push({c,i});
+    else if(pairs[c]){const top=stack.pop();if(!top||top.c!==pairs[c])return {ok:false,detail:"対応しない括弧「"+c+"」付近（文字位置 "+i+"）。"};}
+  }
+  if(quote)return {ok:false,detail:"文字列またはテンプレートリテラルが閉じていない可能性があります。"};
+  if(blockComment)return {ok:false,detail:"ブロックコメントが閉じていない可能性があります。"};
+  if(stack.length)return {ok:false,detail:"閉じ括弧が不足している可能性があります（"+stack[stack.length-1].c+"）。"};
+  return {ok:true,detail:"簡易的な括弧・文字列チェックを通過。JavaScript全体の構文検証ではありません。"};
+}
+function renderChecks(items){
+  $("checks").innerHTML="";
+  items.forEach(item=>{
+    const d=document.createElement("div");d.className="check";
+    const dot=document.createElement("span");dot.className="dot";dot.textContent=item.icon;
+    dot.style.color=item.kind==="ok"?"var(--green)":item.kind==="warn"?"var(--yellow)":item.kind==="bad"?"var(--red)":"var(--cyan)";
+    const body=document.createElement("div");
+    const title=document.createElement("strong");title.textContent=item.title;
+    const detail=document.createElement("div");detail.className="muted";detail.textContent=item.detail;
+    body.append(title,detail);d.append(dot,body);$("checks").append(d);
+  });
+}
+function runAnalysis(){
+  const a=original.value,b=obfuscated.value;
+  if(!a.trim()||!b.trim()){$("mainStatus").className="status warn";$("mainStatus").textContent="元コードと難読化後コードの両方を入力してください。";return;}
+  const as=analyzeOne(a),bs=analyzeOne(b), score=scoreObfuscation(b,bs);
+  $("score").textContent=score;$("bar").style.width=score+"%";
+  $("sizeRatio").textContent=(utf8Bytes(b)/Math.max(1,utf8Bytes(a))).toFixed(2)+"×";
+  $("stringCount").textContent=bs.strings;$("riskCount").textContent=bs.found.reduce((n,x)=>n+x.count,0);
+  $("mainStatus").className="status ok";$("mainStatus").textContent="静的解析完了。コードは実行していません。";
+  $("scoreExplain").textContent="推定評価："+(score>=65?"難読化らしい特徴が複数あります。":score>=30?"一部に難読化の特徴があります。":"検出できた難読化の特徴は少なめです。")+" この数値は解析耐性の保証ではありません。";
+  const items=[];
+  addCheck(items,"ok","サイズ比較（実測）","元："+utf8Bytes(a).toLocaleString()+" bytes / 難読化後："+utf8Bytes(b).toLocaleString()+" bytes / 比率："+(utf8Bytes(b)/Math.max(1,utf8Bytes(a))).toFixed(2)+"×");
+  const da=delimiterCheck(a),db=delimiterCheck(b);
+  addCheck(items,da.ok?"ok":"warn","元コードの簡易構文チェック",da.detail);
+  addCheck(items,db.ok?"ok":"warn","難読化後の簡易構文チェック",db.detail);
+  addCheck(items,bs.hexEscapes?"ok":"info","エスケープ表現（実測）","難読化後で検出："+bs.hexEscapes+" 件。多いほど強いとは限りません。");
+  addCheck(items,bs.strings<=Math.max(5,as.strings)?"ok":"warn","文字列リテラル残存（実測）","元："+as.strings+" 件 / 難読化後："+bs.strings+" 件（正規表現による概算。テンプレート文字列などは誤検出あり）");
+  addCheck(items,bs.longLines?"ok":"info","長い1行（実測）","難読化後で500文字を超える行："+bs.longLines+" 行。整形だけでも変わるため、強度の証明ではありません。");
+  if(bs.found.length){
+    bs.found.forEach(x=>addCheck(items,"warn","注意パターン："+x.label,"検出："+x.count+" 件。正当なコードにも現れます。存在だけで悪意があるとは判断できません。"));
+  }else addCheck(items,"ok","既知の注意パターン","この簡易リストでは対象パターンを検出しませんでした。安全性の証明ではありません。");
+  addCheck(items,"info","動作の同等性","静的解析だけでは元コードと同じ動作か確定できません。「動作テスト」で手動実行するか、信頼できるテスト環境で確認してください。");
+  addCheck(items,"info","解析耐性スコア（推定）","ヒューリスティック："+score+"/100。実際の攻撃者の解析時間や突破可能性は測定していません。");
+  renderChecks(items);
+}
+function buildSandboxDoc(code, token){
+  const safe=JSON.stringify(code).replace(/</g,"\\u003c").replace(/>/g,"\\u003e").replace(/&/g,"\\u0026");
+  return '<!doctype html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'unsafe-inline\'; connect-src \'none\'; img-src \'none\'; media-src \'none\'; font-src \'none\'; object-src \'none\'; base-uri \'none\'; form-action \'none\'"><script>(function(){const token='+JSON.stringify(token)+';function send(type,value){try{parent.postMessage({__v8ccTest:token,type:type,value:String(value).slice(0,4000)}, "*")}catch(e){}}const old=console.log;console.log=function(){send("log",Array.from(arguments).map(x=>{try{return typeof x==="string"?x:JSON.stringify(x)}catch(e){return String(x)}}).join(" "))};window.onerror=function(m,src,line,col){send("error",m+" (line "+line+")")};window.onunhandledrejection=function(e){send("error","Unhandled rejection: "+e.reason)};try{const source='+safe+';const s=document.createElement("script");s.textContent=source;document.documentElement.appendChild(s);send("started","スクリプトを開始しました（完了の保証ではありません）。")}catch(e){send("error",e.name+": "+e.message)}})();<\/script>';
+}
+let activeFrame=null, activeToken=null, timeoutId=null, runLogs=[];
+function stopFrame(){if(activeFrame){activeFrame.remove();activeFrame=null;}if(timeoutId){clearTimeout(timeoutId);timeoutId=null;}activeToken=null;}
+function runCode(which){
+  const code=which==="original"?original.value:obfuscated.value;
+  if(!code.trim()){$("runOut").className="status warn";$("runOut").textContent="先に対象コードを入力してください。";return;}
+  if(!confirm("入力コードを隔離 iframe 内で実行しますか？\n未知のコードにはリスクがあります。信頼できないコードは実行しないでください。"))return;
+  stopFrame();runLogs=[];activeToken=Math.random().toString(36).slice(2)+Date.now();
+  const token=activeToken, frame=document.createElement("iframe");
+  frame.sandbox="allow-scripts";frame.style.display="none";frame.setAttribute("aria-hidden","true");
+  window.addEventListener("message",onMessage);
+  function cleanupListener(){window.removeEventListener("message",onMessage);}
+  function onMessage(e){
+    if(e.source!==frame.contentWindow||!e.data||e.data.__v8ccTest!==token)return;
+    const d=e.data;
+    if(d.type==="log")runLogs.push("console.log: "+d.value);
+    else if(d.type==="error")runLogs.push("エラー: "+d.value);
+    else if(d.type==="started")runLogs.push(d.value);
+    $("runOut").textContent=runLogs.join("\n")||"実行中…";
+    if(d.type==="error")$("runOut").className="status bad";
+    else $("runOut").className="status";
+  }
+  activeFrame=frame;
+  frame.srcdoc=buildSandboxDoc(code,token);
+  document.body.appendChild(frame);
+  $("runOut").className="status";$("runOut").textContent="隔離環境で実行中…";
+  timeoutId=setTimeout(()=>{
+    if(activeFrame===frame){
+      runLogs.push("タイムアウト：5秒経過。無限ループ等の可能性があります。");
+      $("runOut").textContent=runLogs.join("\n");$("runOut").className="status warn";
+      stopFrame();cleanupListener();
+    }
+  },5000);
+  const oldStop=stopFrame;
+  // Keep the message listener only for the lifetime of this test.
+  const originalStop=stopFrame;
+  stopFrame=function(){originalStop();cleanupListener();stopFrame=originalStop;};
+}
+$("analyze").addEventListener("click",runAnalysis);
+$("sample").addEventListener("click",()=>{original.value=sample;obfuscated.value="";$("mainStatus").className="status";$("mainStatus").textContent="サンプルを入力しました。難読化後コードを右側に貼り付けてください。";});
+$("clear").addEventListener("click",()=>{stopFrame();original.value="";obfuscated.value="";$("checks").innerHTML='<div class="check"><span class="dot">○</span><div>まだ検査していません。</div></div>';$("score").textContent="—";$("bar").style.width="0";$("sizeRatio").textContent="—";$("stringCount").textContent="—";$("riskCount").textContent="—";$("scoreExplain").textContent="解析を実行すると結果が表示されます。";$("mainStatus").className="status";$("mainStatus").textContent="入力を消去しました。";$("runOut").textContent="未実行。コードは自動実行されません。";});
+$("runOriginal").addEventListener("click",()=>runCode("original"));
+$("runObfuscated").addEventListener("click",()=>runCode("obfuscated"));
+$("stopRun").addEventListener("click",()=>{stopFrame();$("runOut").className="status";$("runOut").textContent="テスト結果を消去しました。";});
+})();
+</script>
+</body>
+</html>
